@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import random
 from google.cloud import texttospeech
 import asyncio
+import random
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -24,7 +25,20 @@ async def on_message(message):
 async def on_voice_state_update(member, before, after):
     if member == client.user:
         return
-    elif not before.channel and after.channel:
+    elif after.channel:
+        bq = [
+            '',
+            'дикий',
+            'ковбой'
+        ]
+        aq = [
+            'зашел в салум',
+            'присоединился',
+            'влетел',
+            'ворвался',
+            'залетел',
+            'вышел из дурки'
+        ]
         channel = after.channel
         
         ttsclient = texttospeech.TextToSpeechClient()
@@ -38,7 +52,7 @@ async def on_voice_state_update(member, before, after):
             audio_encoding=texttospeech.enums.AudioEncoding.MP3,
             pitch=-3.2)
 
-        synthesis_input = texttospeech.types.SynthesisInput(text=f"{member.display_name} залетел")
+        synthesis_input = texttospeech.types.SynthesisInput(text=f"{random.choice(bq)} {member.display_name} {random.choice(aq)}")
 
         response = ttsclient.synthesize_speech(synthesis_input, voice, audio_config)
 
@@ -54,7 +68,7 @@ async def on_voice_state_update(member, before, after):
         print(member.display_name, 'зашел')
         await vc.disconnect()
 
-    elif before.channel and not after.channel:
+    elif before.channel:
         channel = before.channel
         
         ttsclient = texttospeech.TextToSpeechClient()
